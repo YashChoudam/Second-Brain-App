@@ -169,6 +169,20 @@ userRoutes.post("/brain/share", authUser, async (req, res) => {
       });
     }
     const hash = crypto.randomBytes(16).toString("hex");
-  } catch (error) {}
+
+    const link = await linkModel.create({
+      hash,
+      userId: req.user.id,
+    });
+    return res.status(201).json({
+      message: "Share link created successfully",
+      hash: link.hash,
+      shareUrl: `/api/v1/user/brain/${link.hash}`,
+    });
+  } catch (error) {
+    return res.status(500).json({
+      message: "Error while creating sharable link",
+    });
+  }
 });
 export { userRoutes };

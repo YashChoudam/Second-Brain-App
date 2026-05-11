@@ -3,7 +3,7 @@ import express from "express";
 import dotenv from "dotenv";
 
 // Import for routes
-import {userRoutes} from "./routes/user.routes.js"; 
+import { userRoutes } from "./routes/user.routes.js";
 
 // Import for internal files
 import { connectDB } from "./database/db.js";
@@ -14,7 +14,6 @@ dotenv.config({
 
 const app = express();
 const port = process.env.PORT;
-
 
 app.use("/api/v1/user", userRoutes);
 

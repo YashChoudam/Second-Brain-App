@@ -5,7 +5,8 @@ import jwt from "jsonwebtoken";
 import { Error as MongooseError } from "mongoose";
 
 // Models and files import
-import { userModel } from "../models/user.model.js";
+import {userModel} from "../models/user.model.js";
+import {contentModel} from "../models/content.model.js"
 import {authUser} from "../middlewares/user.middleware.js"
 
 const userRoutes = Router();
@@ -15,6 +16,7 @@ userRoutes.use(express.json());
 //Signup
 userRoutes.post("/signup", async (req, res) => {
   const { email, username, password } = req.body;
+  
   try {
     const salt = await bcrypt.genSalt(12);
     const hashedPassword = await bcrypt.hash(password, salt);
@@ -27,7 +29,7 @@ userRoutes.post("/signup", async (req, res) => {
   } catch (error) {
     if (error instanceof Error && "code" in error && error.code === 11000) {
       return res.status(400).json({
-        message: "User already exists ",
+        message: "User already exists",
       });
     }
     return res.json({ message: "Database error" });
@@ -68,5 +70,31 @@ userRoutes.post("/login", async (req, res) => {
     }
 });
 
+userRoutes.post("/content", authUser , async (req,res)=>{
+    const {link , type , title , tags} = req.body ;
+
+    try {
+        if (!req.user){
+            return res.status(401).json({
+                message : "Unauthorized user",
+            });
+        }
+        const content = await contentModel.create({
+            link : link ,
+            type : type ,
+            title : title ,
+            tags : tags ,
+            userId : req.user.id,
+        })
+        return res.status(201).json({
+            message : "Content added successfully",
+            content
+        })
+    } catch (error) {
+        return res.status(500).json({
+            message : "Error while adding content"
+        })
+    }
+})
 
 export {userRoutes} ;

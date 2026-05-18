@@ -1,1 +1,0 @@
-{"root":["./src/index.ts","./src/database/db.ts","./src/middlewares/user.middleware.ts","./src/models/content.model.ts","./src/models/link.models.ts","./src/models/tag.models.ts","./src/models/user.model.ts","./src/routes/user.routes.ts","./src/types/express.d.ts"],"version":"6.0.3"}

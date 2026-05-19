@@ -16,9 +16,9 @@ const app = express();
 const port = process.env.PORT;
 
 app.use("/api/v1/user", userRoutes);
-app.use("/",(req,res)=>{
-  res.send("Hello world")
-})
+app.use("/", (req, res) => {
+  res.send("Hello world");
+});
 
 connectDB()
   .then(() => {

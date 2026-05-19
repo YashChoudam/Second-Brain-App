@@ -245,7 +245,7 @@ token: <jwt_token>
 The backend filters content using:
 
 ```ts
-userId: req.user.id
+userId: req.user.id;
 ```
 
 It also populates tag details using:
@@ -286,8 +286,8 @@ DELETE /api/v1/user/content/65f1a2b3c4d5e6f789123456
 The backend checks both:
 
 ```ts
-_id: contentId
-userId: req.user.id
+_id: contentId;
+userId: req.user.id;
 ```
 
 Success response:

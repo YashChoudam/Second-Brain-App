@@ -9,6 +9,8 @@ interface CardProp {
   startIcon?: ReactElement;
   shareIcon?: ReactElement;
   deleteIcon?: ReactElement;
+  onShare?: () => void;
+  onDelete?: () => void;
 }
 
 export function Card(props: CardProp) {
@@ -37,13 +39,19 @@ export function Card(props: CardProp) {
 
         <div className="flex items-center gap-3 text-gray-400">
           {props.shareIcon && (
-            <button className="cursor-pointer hover:text-gray-600">
+            <button
+              onClick={props.onShare}
+              className="cursor-pointer hover:text-gray-600"
+            >
               {props.shareIcon}
             </button>
           )}
 
           {props.deleteIcon && (
-            <button className="cursor-pointer hover:text-gray-600">
+            <button
+              onClick={props.onDelete}
+              className="cursor-pointer hover:text-gray-600"
+            >
               {props.deleteIcon}
             </button>
           )}
@@ -64,7 +72,9 @@ export function Card(props: CardProp) {
       )}
 
       {props.text && (
-        <p className="text-sm text-gray-700 leading-relaxed">{props.text}</p>
+        <p className="text-sm text-gray-700 leading-relaxed whitespace-pre-line break-words">
+          {props.text}
+        </p>
       )}
 
       {props.tags && props.tags.length > 0 && (

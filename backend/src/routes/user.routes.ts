@@ -1,8 +1,7 @@
 // Package imports
-import express, { Router } from "express";
+import { Router } from "express";
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
-import { Error as MongooseError } from "mongoose";
 import crypto from "crypto";
 
 // Models and files import
@@ -13,8 +12,6 @@ import { tagModel } from "../models/tag.models.js";
 import { authUser } from "../middlewares/user.middleware.js";
 
 const userRoutes = Router();
-
-userRoutes.use(express.json());
 
 //Signup
 userRoutes.post("/signup", async (req, res) => {
@@ -81,16 +78,36 @@ userRoutes.post("/content", authUser, async (req, res) => {
         message: "Unauthorized user",
       });
     }
+
+    const tagTitles = Array.isArray(tags)
+      ? tags
+      : String(tags || "")
+          .split(",")
+          .map((tag) => tag.trim())
+          .filter(Boolean);
+
+    const tagDocuments = await Promise.all(
+      tagTitles.map((tag) =>
+        tagModel.findOneAndUpdate(
+          { title: tag.toLowerCase() },
+          { title: tag.toLowerCase() },
+          { new: true, upsert: true },
+        ),
+      ),
+    );
+
     const content = await contentModel.create({
       link: link,
       type: type,
       title: title,
-      tags: tags,
+      tags: tagDocuments.map((tag) => tag._id),
       userId: req.user.id,
     });
+    const populatedContent = await content.populate("tags");
+
     return res.status(201).json({
       message: "Content added successfully",
-      content,
+      content: populatedContent,
     });
   } catch (error) {
     return res.status(500).json({
@@ -181,6 +198,38 @@ userRoutes.post("/brain/share", authUser, async (req, res) => {
   } catch (error) {
     return res.status(500).json({
       message: "Error while creating sharable link",
+    });
+  }
+});
+
+userRoutes.get("/brain/:shareHash", async (req, res) => {
+  const { shareHash } = req.params;
+
+  try {
+    const link = await linkModel.findOne({
+      hash: shareHash,
+    });
+
+    if (!link) {
+      return res.status(404).json({
+        message: "Brain not found",
+      });
+    }
+
+    const content = await contentModel
+      .find({
+        userId: link.userId,
+      })
+      .populate("tags")
+      .populate("userId", "username email");
+
+    return res.status(200).json({
+      message: "Brain fetched successfully",
+      content,
+    });
+  } catch (error) {
+    return res.status(500).json({
+      message: "Error while fetching shared brain",
     });
   }
 });

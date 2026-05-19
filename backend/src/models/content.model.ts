@@ -13,7 +13,7 @@ const contentSchema = new Schema(
     type: {
       type: String,
       required: true,
-      enum: ["image", "video", "article", "tweet", "document"],
+      enum: ["image", "video", "article", "tweet", "document", "link"],
     },
     title: {
       type: String,

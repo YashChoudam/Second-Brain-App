@@ -1,7 +1,7 @@
 // Import for packages
 import express from "express";
 import dotenv from "dotenv";
-import cors from "cors" ;
+import cors from "cors";
 
 // Import for routes
 import { userRoutes } from "./routes/user.routes.js";
@@ -9,9 +9,7 @@ import { userRoutes } from "./routes/user.routes.js";
 // Import for internal files
 import { connectDB } from "./database/db.js";
 
-dotenv.config({
-  path: "../.env",
-});
+dotenv.config();
 
 const app = express();
 const port = process.env.PORT;
@@ -23,6 +21,8 @@ app.use(
     credentials: true,
   })
 );
+
+app.use(express.json());
 
 app.use("/api/v1/user", userRoutes);
 app.use("/", (req, res) => {

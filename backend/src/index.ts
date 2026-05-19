@@ -1,6 +1,7 @@
 // Import for packages
 import express from "express";
 import dotenv from "dotenv";
+import cors from "cors" ;
 
 // Import for routes
 import { userRoutes } from "./routes/user.routes.js";
@@ -14,6 +15,14 @@ dotenv.config({
 
 const app = express();
 const port = process.env.PORT;
+
+app.use(
+  cors({
+    origin: "http://localhost:5173",
+    methods: ["GET", "POST", "PUT", "DELETE"],
+    credentials: true,
+  })
+);
 
 app.use("/api/v1/user", userRoutes);
 app.use("/", (req, res) => {
